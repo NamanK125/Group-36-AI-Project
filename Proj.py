@@ -67,46 +67,6 @@ def depth_first_search(start, end):
                 stack.append(new_path)
 
 # Function to find the optimal path using ant colony optimization
-def ant_colony_optimization(start, end, rooms_data):
-    
-    room_indices = {room: i for i, room in enumerate(rooms_data.keys())}
-    num_rooms = len(rooms_data)
-
-    pheromone = np.ones((len(rooms_data), len(rooms_data)))
-    iterations = 100
-
-    for i in range(iterations):
-        ant_paths = []
-
-        for ant in range(50):
-            current_room = start
-            path = [current_room]
-            
-            while current_room != end:
-                possible_neighbors = neighbors[current_room]
-                probabilities = []
-
-                for neighbor in possible_neighbors:
-                    pheromone_level = pheromone[room_indices[current_room]][room_indices[neighbor]]
-                    heuristic = 1 / (np.linalg.norm(rooms_data[current_room]) + np.linalg.norm(rooms_data[neighbor]))
-                    probabilities.append((neighbor, pheromone_level * heuristic))
-
-                total_prob = sum(p[1] for p in probabilities)
-                probabilities = [(n, p / total_prob) for n, p in probabilities] if total_prob != 0 else probabilities
-
-                next_room = np.random.choice([n for n, _ in probabilities], p=[p for _, p in probabilities])
-                path.append(next_room)
-                current_room = next_room
-
-            ant_paths.append((path, get_path_cost(path)))
-
-        for path, cost in ant_paths:
-            for idx in range(len(path) - 1):
-                room_a_idx, room_b_idx = rooms_data.index(path[idx]), rooms_data.index(path[idx + 1])
-                pheromone[room_a_idx, room_b_idx] += 1 / cost
-
-    best_path = max(ant_paths, key=lambda x: x[1])[0]
-    return best_path
 
 def hill_climbing(start, end, heuristic, neighbors):
     current_room = start
